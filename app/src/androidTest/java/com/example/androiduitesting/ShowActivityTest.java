@@ -27,7 +27,7 @@ public class ShowActivityTest {
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
     @Test
-    public switchActivityTest(){
+    public void switchActivityTest(){
         // Add a city to the list
         onView(withId(R.id.button_add)).perform(click());
         onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Edmonton"));
@@ -68,7 +68,7 @@ public class ShowActivityTest {
     public void backButtonTest() {
         // Add a city to list
         onView(withId(R.id.button_add)).perform(click());
-        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Ottawa"));
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Saskatoon"));
         onView(withId(R.id.button_confirm)).perform(click());
         // Click on the city n list
         onData(is(instanceOf(String.class)))
