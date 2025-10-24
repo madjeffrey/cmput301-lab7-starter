@@ -1,0 +1,87 @@
+package com.example.androiduitesting;
+import static androidx.test.espresso.Espresso.onData;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+
+
+@RunWith(AndroidJUnit4.class)
+@LargeTest
+public class ShowActivityTest {
+
+    @Rule
+    public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
+
+    @Test
+    public switchActivityTest(){
+        // Add a city to the list
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Edmonton"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        // Click on the city in the list
+        onData(is(instanceOf(String.class)))
+                .inAdapterView(withId(R.id.city_list))
+                .atPosition(0)
+                .perform(click());
+        // Verify that we switch over by seeing back button
+        onView(withId(R.id.backBtn)).check(matches(isDisplayed()));
+        // Verify that the city name is displayed in ShowActivity
+        onView(withId(R.id.textViewCityName)).check(matches(withText("Edmonton")));
+    }
+
+    @Test
+    public void nameConsistencyTest() {
+        // add cities to list
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Tofino"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Calgary"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Regina"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        // Click on the second city (Calgary)
+        onData(is(instanceOf(String.class)))
+                .inAdapterView(withId(R.id.city_list))
+                .atPosition(1)
+                .perform(click());
+        // Verify that city displayed is correct
+        onView(withId(R.id.textViewCityName)).check(matches(withText("Calgary")));
+    }
+
+    @Test
+    public void backButtonTest() {
+        // Add a city to list
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Ottawa"));
+        onView(withId(R.id.button_confirm)).perform(click());
+        // Click on the city n list
+        onData(is(instanceOf(String.class)))
+                .inAdapterView(withId(R.id.city_list))
+                .atPosition(0)
+                .perform(click());
+        // Verify we are in ShowActivity
+        onView(withId(R.id.backBtn)).check(matches(isDisplayed()));
+        // Click the back button
+        onView(withId(R.id.backBtn)).perform(click());
+        // Verify we are back in MainActivity by checking for add button
+        onView(withId(R.id.button_add)).check(matches(isDisplayed()));
+        // Verify we can see city list
+        onView(withId(R.id.city_list)).check(matches(isDisplayed()));
+    }
+}
